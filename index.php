@@ -3,139 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Пример анимации логотипа</title>
+    <title>AE Logo Animations</title>
     <style>
+        /* ========================================= */
+        /* Базовые стили страницы                    */
+        /* ========================================= */
         :root {
             --bg-dark: #121212;
-            --logo-color: #264653; /* Исходный цвет вашего лого */
-            --size: 150px; /* Размер контейнера лого */
+            --logo-color: #264653; /* Фирменный цвет логотипа */
+            --card-bg: #1e1e1e;
         }
 
         body, html {
             margin: 0;
             padding: 0;
-            height: 100%;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             background-color: var(--bg-dark);
-            font-family: sans-serif;
-            color: #eee;
-            flex-wrap: wrap; /* Для удобного размещения нескольких примеров */
-            gap: 50px;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #ffffff;
+            flex-wrap: wrap;
+            gap: 40px;
+            padding: 40px;
+            box-sizing: border-box;
         }
 
-        .demo-block {
-            text-align: center;
+        .demo-card {
+            background-color: var(--card-bg);
             border: 1px solid #333;
-            padding: 20px;
-            border-radius: 8px;
-            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            width: 260px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        /* --- Базовая структура логотипа на CSS --- */
-        .ermakov-logo {
-            width: var(--size);
-            height: var(--size);
-            position: relative;
-            transform-style: preserve-3d; /* Для 3D-анимаций */
-        }
-
-        /* Общие стили для всех линий/кругов */
-        .ermakov-logo div {
-            position: absolute;
-            background-color: var(--logo-color);
-            border-radius: 10px; /* Гладкие края */
-        }
-
-        /* 1. Внешние круги */
-        .ermakov-logo .outer-rings {
-            width: 100%;
-            height: 100%;
-            border: 6px solid var(--logo-color);
-            border-radius: 50%;
-            background: transparent;
-            /* Превращаем сплошной круг в прерывистый (как в оригинале) */
-            border-left-color: transparent;
-            border-right-color: transparent;
-            top: -6px;
-            left: -6px;
-        }
-
-        .ermakov-logo .outer-rings::after {
-            content: '';
-            position: absolute;
-            width: 105%; height: 105%;
-            top: -8px; left: -8px;
-            border: 6px solid var(--logo-color);
-            border-radius: 50%;
-            border-top-color: transparent;
-            border-bottom-color: transparent;
-        }
-
-        /* 2. Центральный крест */
-        .ermakov-logo .line-v {
-            width: 6px;
-            height: 130px;
-            top: 2px;
-            left: calc(50% - 3px);
-        }
-        .ermakov-logo .line-v-alt {
-            width: 5px;
-            height: 130px;
-            top: 2px;
-            left: calc(50% + 2px);
-        }
-
-        .ermakov-logo .line-h {
-            width: 65px;
-            height: 6px;
-            top: 90px;
-            left: 35px;
-        }
-        .ermakov-logo .line-h-alt {
-            width: 65px;
-            height: 5px;
-            top: 95px;
-            left: 35px;
-        }
-
-        /* Правая часть креста */
-        .ermakov-logo .line-h-right {
-            width: 40px;
-            height: 6px;
-            top: 90px;
-            left: 120px;
-        }
-        .ermakov-logo .line-h-right-alt {
-            width: 40px;
-            height: 5px;
-            top: 95px;
-            left: 120px;
-        }
-
-        /* Длинные вертикальные линии */
-        .ermakov-logo .line-v-long {
-            width: 6px;
-            height: 196px;
-            top: 2px;
-            left: calc(50% + 12px);
-        }
-        .ermakov-logo .line-v-long-alt {
-            width: 5px;
-            height: 196px;
-            top: 2px;
-            left: calc(50% + 17px);
+        .demo-card h3 {
+            margin: 0 0 30px 0;
+            font-size: 16px;
+            font-weight: 400;
+            color: #b0bec5;
         }
 
         /* ========================================= */
-        /* ВАРИАНТ 1: Плавное появление (Эффект Фокуса) */
+        /* Настройки SVG Логотипа                    */
         /* ========================================= */
-        .ermakov-logo.anim-focus {
+        .ae-logo {
+            width: 160px;
+            height: 160px;
+            overflow: visible;
+        }
+
+        /* Общие стили для всех линий логотипа */
+        .ae-path {
+            fill: none;
+            stroke: var(--logo-color);
+            stroke-width: 8;
+            stroke-linecap: butt; /* Плоские концы линий как на эталоне */
+        }
+
+        /* ========================================= */
+        /* ВАРИАНТ 1: Плавный фокус                  */
+        /* ========================================= */
+        .anim-focus {
             opacity: 0;
-            filter: blur(10px);
-            transform: scale(0.8);
-            animation: focusReveal 1.5s ease forwards;
+            filter: blur(12px);
+            transform: scale(0.7);
+            animation: focusReveal 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
         }
 
         @keyframes focusReveal {
@@ -147,83 +83,53 @@
         }
 
         /* ========================================= */
-        /* ВАРИАНТ 2: Последовательная отрисовка */
+        /* ВАРИАНТ 2: Последовательная отрисовка     */
         /* ========================================= */
-        .ermakov-logo.anim-draw div {
-            opacity: 0;
+        /* Изначально прячем все линии */
+        .anim-draw .ae-path {
+            stroke-dasharray: 300;
+            stroke-dashoffset: 300;
         }
 
-        /* Задержки для разных элементов */
-        .ermakov-logo.anim-draw .outer-rings {
-            animation: drawElement 0.5s ease-out forwards 0.2s;
-        }
-        .ermakov-logo.anim-draw .line-v, .ermakov-logo.anim-draw .line-v-alt {
-            animation: drawElement 0.4s ease-out forwards 0.6s;
-        }
-        .ermakov-logo.anim-draw .line-h, .ermakov-logo.anim-draw .line-h-alt,
-        .ermakov-logo.anim-draw .line-h-right, .ermakov-logo.anim-draw .line-h-right-alt {
-            animation: drawElement 0.4s ease-out forwards 1.0s;
-        }
-        .ermakov-logo.anim-draw .line-v-long, .ermakov-logo.anim-draw .line-v-long-alt {
-            animation: drawElement 0.4s ease-out forwards 1.4s;
-        }
+        /* Задаем очередность и время появления каждой линии */
+        .anim-draw .arc-right   { animation: drawLine 0.7s ease-out forwards 0.2s; }
+        .anim-draw .vert-right  { animation: drawLine 0.6s ease-out forwards 0.5s; }
+        .anim-draw .arc-left    { animation: drawLine 0.7s ease-out forwards 0.9s; }
+        .anim-draw .vert-left   { animation: drawLine 0.5s ease-out forwards 1.3s; }
+        .anim-draw .horiz-right { animation: drawLine 0.4s ease-out forwards 1.6s; }
+        .anim-draw .horiz-left  { animation: drawLine 0.4s ease-out forwards 1.8s; }
 
-        @keyframes drawElement {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        @keyframes drawLine {
+            to { stroke-dashoffset: 0; }
         }
 
         /* ========================================= */
-        /* ВАРИАНТ 3: Пульсация и Сдвиг (Глич-эффект) */
+        /* ВАРИАНТ 3: Пульсация (бесконечно)         */
         /* ========================================= */
-        .ermakov-logo.anim-glitch {
-            animation: glitchPulse 3s ease-in-out infinite;
-        }
-
-        .ermakov-logo.anim-glitch div {
+        .anim-pulse {
+            animation: pulseEffect 4s infinite ease-in-out;
             transform-origin: center;
         }
 
-        /* Делаем линии чуть тоньше, чтобы они "играли" */
-        .ermakov-logo.anim-glitch .line-v-alt,
-        .ermakov-logo.anim-glitch .line-h-alt,
-        .ermakov-logo.anim-glitch .line-h-right-alt,
-        .ermakov-logo.anim-glitch .line-v-long-alt {
-            opacity: 0.4;
-            animation: innerPulse 1s ease-in-out infinite alternate;
-        }
-
-        @keyframes glitchPulse {
-            0%, 100% { transform: scale(1); opacity: 1; filter: blur(0); }
-            5% { transform: scale(1.03); opacity: 0.8; filter: blur(1px); }
-            10% { transform: scale(1); opacity: 1; filter: blur(0); }
-            95% { transform: scale(1); opacity: 1; filter: blur(0); }
-        }
-
-        @keyframes innerPulse {
-            to { opacity: 0.1; }
+        @keyframes pulseEffect {
+            0%, 100% { transform: scale(1); opacity: 1; filter: drop-shadow(0 0 0 transparent); }
+            50% { transform: scale(1.05); opacity: 0.8; filter: drop-shadow(0 0 15px rgba(38, 70, 83, 0.5)); }
         }
 
         /* ========================================= */
-        /* ВАРИАНТ 4: Вертикальное вращение при появлении */
+        /* ВАРИАНТ 4: Вертикальное вращение          */
         /* ========================================= */
-        .ermakov-logo.anim-spin {
+        .anim-spin {
             opacity: 0;
-            transform: rotateY(-90deg) scale(0.5); /* Начало: повернуто ребром */
-            transform-origin: center center;
-            animation: spinReveal 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            transform: rotateY(-90deg);
+            transform-origin: center;
+            animation: spinReveal 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
 
         @keyframes spinReveal {
             100% {
                 opacity: 1;
-                transform: rotateY(0deg) scale(1);
+                transform: rotateY(0deg);
             }
         }
 
@@ -231,65 +137,45 @@
 </head>
 <body>
 
-    <div class="demo-block">
-        <p>1. Плавный фокус</p>
-        <div class="ermakov-logo anim-focus">
-            <div class="outer-rings"></div>
-            <div class="line-v"></div>
-            <div class="line-v-alt"></div>
-            <div class="line-h"></div>
-            <div class="line-h-alt"></div>
-            <div class="line-h-right"></div>
-            <div class="line-h-right-alt"></div>
-            <div class="line-v-long"></div>
-            <div class="line-v-long-alt"></div>
-        </div>
+    <template id="logo-template">
+        <svg class="ae-logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <path class="ae-path arc-right" d="M 110 20 A 80 80 0 0 1 110 180" />
+            <line class="ae-path vert-right" x1="110" y1="20" x2="110" y2="180" />
+            <line class="ae-path horiz-right" x1="110" y1="100" x2="180" y2="100" />
+
+            <path class="ae-path arc-left" d="M 90 20 A 80 80 0 0 0 45 160" />
+            <line class="ae-path vert-left" x1="90" y1="20" x2="90" y2="130" />
+            <line class="ae-path horiz-left" x1="20" y1="100" x2="90" y2="100" />
+        </svg>
+    </template>
+
+    <div class="demo-card">
+        <h3>1. Плавный фокус</h3>
+        <div class="anim-focus" id="wrap-1"></div>
     </div>
 
-    <div class="demo-block">
-        <p>2. Последовательная отрисовка</p>
-        <div class="ermakov-logo anim-draw">
-            <div class="outer-rings"></div>
-            <div class="line-v"></div>
-            <div class="line-v-alt"></div>
-            <div class="line-h"></div>
-            <div class="line-h-alt"></div>
-            <div class="line-h-right"></div>
-            <div class="line-h-right-alt"></div>
-            <div class="line-v-long"></div>
-            <div class="line-v-long-alt"></div>
-        </div>
+    <div class="demo-card">
+        <h3>2. Отрисовка линий</h3>
+        <div class="anim-draw" id="wrap-2"></div>
     </div>
 
-    <div class="demo-block">
-        <p>3. Глич-пульсация (бесконечно)</p>
-        <div class="ermakov-logo anim-glitch">
-            <div class="outer-rings"></div>
-            <div class="line-v"></div>
-            <div class="line-v-alt"></div>
-            <div class="line-h"></div>
-            <div class="line-h-alt"></div>
-            <div class="line-h-right"></div>
-            <div class="line-h-right-alt"></div>
-            <div class="line-v-long"></div>
-            <div class="line-v-long-alt"></div>
-        </div>
+    <div class="demo-card">
+        <h3>3. Пульсация (бесконечно)</h3>
+        <div class="anim-pulse" id="wrap-3"></div>
     </div>
 
-    <div class="demo-block">
-        <p>4. Вертикальное вращение (при появлении)</p>
-        <div class="ermakov-logo anim-spin">
-            <div class="outer-rings"></div>
-            <div class="line-v"></div>
-            <div class="line-v-alt"></div>
-            <div class="line-h"></div>
-            <div class="line-h-alt"></div>
-            <div class="line-h-right"></div>
-            <div class="line-h-right-alt"></div>
-            <div class="line-v-long"></div>
-            <div class="line-v-long-alt"></div>
-        </div>
+    <div class="demo-card">
+        <h3>4. Вращение по оси Y</h3>
+        <div class="anim-spin" id="wrap-4"></div>
     </div>
+
+    <script>
+        const template = document.getElementById('logo-template').innerHTML;
+        document.getElementById('wrap-1').innerHTML = template;
+        document.getElementById('wrap-2').innerHTML = template;
+        document.getElementById('wrap-3').innerHTML = template;
+        document.getElementById('wrap-4').innerHTML = template;
+    </script>
 
 </body>
 </html>
