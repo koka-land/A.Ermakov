@@ -22,6 +22,25 @@
     transform: scale(1.4);
     margin-bottom: 60px;
     overflow: visible;
+    /* Применяем объединенную анимацию: 1.5 секунды, кривая из Animista */
+    animation: rotate-fade-in 1.5s cubic-bezier(0.455, 0.030, 0.515, 0.955) both;
+}
+
+/* Анимация: Вращение + Появление */
+@keyframes rotate-fade-in {
+    0% {
+        opacity: 0; /* На старте прозрачный */
+        /* Начинаем с 0 градусов, обязательно сохраняя scale(1.4) */
+        transform: scale(1.4) rotateY(0);
+    }
+    40% {
+        opacity: 1; /* К 40% времени анимации логотип полностью проявится */
+    }
+    100% {
+        opacity: 1;
+        /* 720deg = 2 полных оборота. Если захотите 3 оборота, напишите 1080deg */
+        transform: scale(1.4) rotateY(720deg);
+    }
 }
 
 /* --- Заголовок (Посимвольная анимация) --- */
