@@ -1,0 +1,87 @@
+/* --- Контейнеры --- */
+.hero-section {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+}
+
+.hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 2;
+}
+
+/* --- Логотип --- */
+.hero-svg {
+    /* Увеличиваем размер логотипа */
+    transform: scale(1.4);
+    margin-bottom: 60px; /* Отступ до текста с учетом увеличения */
+    /* Решает проблему обрезанных краев без изменения viewBox в HTML */
+    overflow: visible;
+}
+
+/* Анимация прорисовки линий логотипа */
+.hero-svg circle,
+.hero-svg line {
+    /* Сводим смещение к нулю, чтобы линии "нарисовались" */
+    animation: drawLogo 1.5s ease-in-out forwards;
+}
+
+@keyframes drawLogo {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* --- Заголовок (Посимвольная анимация) --- */
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 400; /* Как на видео, без лишней жирности */
+    margin: 0 0 10px 0;
+    letter-spacing: 1px;
+    display: flex;
+    justify-content: center;
+}
+
+.hero-title .char {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(30px); /* Буква смещена вниз */
+    /* Сама анимация (задержка для каждой буквы устанавливается в JS) */
+    animation: charFlyUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes charFlyUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Подзаголовок (Появление целиком) --- */
+.hero-subtitle {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    margin: 0;
+    font-weight: 300;
+
+    /* Изначально скрыт */
+    opacity: 0;
+    transform: translateY(20px);
+
+    /* Появляется через 2.2 секунды (после отрисовки лого и заголовка) */
+    animation: blockFadeUp 0.8s ease forwards 2.2s;
+}
+
+@keyframes blockFadeUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
