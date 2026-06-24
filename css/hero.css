@@ -33,7 +33,7 @@
 /* 1. Анимация прозрачности (ваша настройка 70%) */
 @keyframes logo-fade {
     0% { opacity: 0; }
-    70% { opacity: 1; }
+    90% { opacity: 1; }
     100% { opacity: 1; }
 }
 
@@ -44,9 +44,9 @@
         /* Быстрый старт, который плавно замедляется к моменту "перелета" */
         animation-timing-function: ease-out;
     }
-    80% {
+    40% {
         /* Перелет: 2 полных оборота (720deg) + 25 градусов по инерции */
-        transform: scale(1.4) rotateY(745deg);
+        transform: scale(1.4) rotateY(780deg);
         /* Плавный отскок назад на место */
         animation-timing-function: ease-in-out;
     }
