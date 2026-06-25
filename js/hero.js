@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // Скорость анимации
-        time += 0.008;
+        time += 0.009;
         requestAnimationFrame(animate);
     }
 
