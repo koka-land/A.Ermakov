@@ -1,24 +1,49 @@
-// --- Анимация фона: Радиальная деформация из центра ---
 document.addEventListener("DOMContentLoaded", () => {
     const canvas = document.getElementById('wave-bg');
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
-    let width, height, cols, rows;
+    let width, height, cols, rows, centerX, centerY;
     const spacing = 560;
     let time = 0;
-
-    // Сила, с которой волна будет растягивать квадрат в центре
-    const amplitude = 30;
 
     function resize() {
         width = canvas.width = canvas.offsetWidth;
         height = canvas.height = canvas.offsetHeight;
-        cols = Math.ceil(width / spacing) + 2;
-        rows = Math.ceil(height / spacing) + 2;
+
+        // Находим точный центр экрана
+        centerX = width / 2;
+        centerY = height / 2;
+
+        // Увеличиваем запас колонок, чтобы при расширении не было "дыр" по краям
+        cols = Math.ceil(width / spacing) + 4;
+        rows = Math.ceil(height / spacing) + 4;
     }
+
     window.addEventListener('resize', resize);
     resize();
+
+    // МАГИЯ ЗДЕСЬ: Функция для расчета радиального смещения каждой точки
+    function getPoint(x_base, y_base, time) {
+        // 1. Направление смещения по-прежнему от центра
+        // (сохраняем эффект, где углы квадрата разъезжаются в разные стороны)
+        const dx = x_base - centerX;
+        const dy = y_base - centerY;
+        const angle = Math.atan2(dy, dx);
+
+        // 2. Фаза волны (тайминг) теперь зависит от X, а не от расстояния от центра!
+        // Умножение на 0.003 делает волну широкой и плавной.
+        // Прибавление time заставляет волну "бежать" в отрицательную сторону оси X (справа налево).
+        // Добавлен легкий модификатор по оси Y (y_base * 0.001), чтобы волна шла под едва заметным углом
+        // и не выглядела слишком искусственно ровной, как сканер.
+        const wave = Math.sin(x_base * 0.003 + y_base * 0.001 + time) * 35;
+
+        // 3. Применяем смещение
+        return {
+            x: x_base + (Math.cos(angle) * wave),
+            y: y_base + (Math.sin(angle) * wave)
+        };
+    }
 
     function animate() {
         ctx.clearRect(0, 0, width, height);
@@ -30,17 +55,15 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.strokeStyle = lineColor;
         ctx.fillStyle = fillColor;
 
-        // НАХОДИМ ТОЧНЫЙ ЦЕНТР ЭКРАНА
-        const cx = width / 2;
-        const cy = height / 2;
-
-        const startX = -spacing;
-        const startY = -spacing;
+        // Центрируем сетку: сдвигаем начало координат так, чтобы ровно в (centerX, centerY)
+        // находился геометрический центр одного из квадратов
+        const startX = centerX - Math.floor(cols / 2) * spacing - (spacing / 2);
+        const startY = centerY - Math.floor(rows / 2) * spacing - (spacing / 2);
 
         for (let i = 0; i < cols; i++) {
             for (let j = 0; j < rows; j++) {
 
-                // Базовые координаты для 4-х углов
+                // Базовые координаты 4-х вершин текущей ячейки
                 let x1_base = startX + i * spacing;
                 let y1_base = startY + j * spacing;
 
@@ -53,13 +76,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 let x4_base = startX + (i + 1) * spacing;
                 let y4_base = startY + (j + 1) * spacing;
 
-                // ВЫЧИСЛЯЕМ СМЕЩЕНИЕ ДЛЯ КАЖДОЙ ИЗ 4-Х ТОЧЕК
-                let p1 = getRadialWave(x1_base, y1_base, cx, cy, time, amplitude);
-                let p2 = getRadialWave(x2_base, y2_base, cx, cy, time, amplitude);
-                let p3 = getRadialWave(x3_base, y3_base, cx, cy, time, amplitude);
-                let p4 = getRadialWave(x4_base, y4_base, cx, cy, time, amplitude);
+                // Получаем итоговые координаты с учетом радиальной волны
+                let p1 = getPoint(x1_base, y1_base, time);
+                let p2 = getPoint(x2_base, y2_base, time);
+                let p3 = getPoint(x3_base, y3_base, time);
+                let p4 = getPoint(x4_base, y4_base, time);
 
-                // Первый треугольник
+                // Отрисовка первого треугольника
                 ctx.beginPath();
                 ctx.moveTo(p1.x, p1.y);
                 ctx.lineTo(p2.x, p2.y);
@@ -68,7 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 ctx.fill();
                 ctx.stroke();
 
-                // Второй треугольник
+                // Отрисовка второго треугольника
                 ctx.beginPath();
                 ctx.moveTo(p2.x, p2.y);
                 ctx.lineTo(p4.x, p4.y);
@@ -79,33 +102,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        time += 0.002; // Скорость пульса
+        // Скорость анимации
+        time += 0.008;
         requestAnimationFrame(animate);
-    }
-
-    // ФУНКЦИЯ РАДИАЛЬНОЙ ВОЛНЫ
-    function getRadialWave(x, y, cx, cy, time, amp) {
-        // 1. Считаем вектор от центра экрана до нашей точки
-        let dx = x - cx;
-        let dy = y - cy;
-
-        // 2. Считаем расстояние от центра до точки (радиус)
-        let radius = Math.sqrt(dx * dx + dy * dy);
-        radius = Math.max(radius, 0.001); // Защита от деления на 0 в самом центре
-
-        // 3. Создаем волну, которая зависит от РАССТОЯНИЯ (расходится кругами)
-        // 0.01 - частота колец волны. 3 - скорость расходения.
-        let wave = Math.sin(radius * 0.01 - time * 3) * amp;
-
-        // 4. Нормализуем вектор (делаем его длину равной 1)
-        let dirX = dx / radius;
-        let dirY = dy / radius;
-
-        // 5. Сдвигаем точку по направлению от центра на величину волны
-        return {
-            x: x + dirX * wave,
-            y: y + dirY * wave
-        };
     }
 
     animate();
