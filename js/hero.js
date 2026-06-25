@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        time += 0.0006; // Твоя замедленная скорость
+        time += 0.008; // Твоя замедленная скорость
         requestAnimationFrame(animate);
     }
 
