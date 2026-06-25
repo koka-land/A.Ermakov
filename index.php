@@ -8,8 +8,6 @@
 
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/hero.css">
-
-    <script src="js/hero.js"></script>
 </head>
 <body>
 
@@ -92,6 +90,8 @@
         });
     });
 </script>
+
+<script src="js/hero.js"></script>
 
 </body>
 </html>
